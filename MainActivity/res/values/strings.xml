@@ -17,7 +17,7 @@
 
 <resources>
 
-    <string name="app_name">Navigation Drawer Example</string>
+    <string name="app_name">HairyHearts</string>
 
     <string-array name="planets_array">
         <item>Compose</item>
