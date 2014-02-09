@@ -3,7 +3,9 @@ package org.hairyhearts;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,6 +24,9 @@ public class LoginActivity extends Activity {
     private final static String TAG = "LoginActivity";
     private final static String SIGNUP_TOKEN_KEY = "signup_token_key";
 
+    public static String REGID_PREF = "regid";
+    public static SharedPreferences  prefs;
+    
     private String mUsername;
     private EditText mUsernameView;
 
@@ -35,11 +40,16 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        BaasUser user = BaasUser.current();
-     /*   if (user != null) {
-            complete();
-        }
-       */ 
+
+        prefs = getSharedPreferences(REGID_PREF, Context.MODE_PRIVATE);
+
+        
+        
+//        BaasUser user = BaasUser.current();
+//        if (user != null) {
+//            complete();
+//        }
+        
         if (savedInstanceState != null) {
             mSignupOrLogin = savedInstanceState.getParcelable(SIGNUP_TOKEN_KEY);
         }
@@ -114,7 +124,11 @@ public class LoginActivity extends Activity {
         mSignupOrLogin = null;
 
         if (success) {
-            new GetRegistrationId(this).execute();            
+            String regId = prefs.getString(REGID_PREF, null);
+            
+            if (regId == null) {           
+                new GetRegistrationId(this).execute();
+            }
         } else {
             mPasswordView.setError(getString(R.string.error_incorrect_password));
             mPasswordView.requestFocus();
@@ -160,6 +174,8 @@ public class LoginActivity extends Activity {
     }
     
     private static class GetRegistrationId extends AsyncTask<Void, Void, Void> {
+
+        
         private LoginActivity context;
         
         public GetRegistrationId(LoginActivity context) {
@@ -173,6 +189,10 @@ public class LoginActivity extends Activity {
             try {
                 String regId = gcm.register(Config.SENDER_ID);
                 BaasBox.getDefault().registerPushSync(regId);
+
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(REGID_PREF, regId);
+                editor.commit();                 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

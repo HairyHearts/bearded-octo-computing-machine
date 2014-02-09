@@ -14,6 +14,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.baasbox.android.BaasDocument;
+import com.baasbox.android.BaasHandler;
+import com.baasbox.android.BaasResult;
+import com.baasbox.android.BaasUser;
+import com.baasbox.android.SaveMode;
+import com.baasbox.android.json.JsonObject;
 import com.gracenote.mmid.MobileSDK.GNConfig;
 import com.gracenote.mmid.MobileSDK.GNOperations;
 import com.gracenote.mmid.MobileSDK.GNSearchResponse;
@@ -26,6 +32,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -142,6 +149,14 @@ public class ComposeFragment extends Fragment {
 				encodeTextView.setVisibility(flag);
 			}
 		});
+
+		sendbutton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				sendMessage();
+
+			}
+		});
+
 
 
 
@@ -370,7 +385,7 @@ public class ComposeFragment extends Fragment {
 
 			} else {
 				GNSearchResponse response = result.getBestResponse();
-				//song_info.setText(response.getTrackTitle() + " by " + response.getArtist());
+				Log.d("RecognizeFromMic", "artist: " + response.getArtist());
 
 				String trackTitle, trackArtist;
 				try {
@@ -405,7 +420,7 @@ public class ComposeFragment extends Fragment {
 					@Override
 					public void onResponse(JSONObject response) {
 						// TODO Auto-generated method stub
-						//Log.i("HairyHearts", " Response " + response.toString());
+						Log.i("HairyHearts", " Response " + response.toString());
 						//song_info.setText("Response => "+response.toString());
 						try {
 							String trackid = response.getJSONObject("message").getJSONObject("body")
@@ -414,12 +429,13 @@ public class ComposeFragment extends Fragment {
 							//	song_info.setText("Track ID => "+ trackid);
 
 
-							JsonObjectRequest jsObjRequestSnippet = new JsonObjectRequest(Request.Method.GET, url_snippet + trackid, null, new Response.Listener<JSONObject>() {
+							JsonObjectRequest jsObjRequestSnippet = new JsonObjectRequest(Request.Method.GET, url_snippet + trackid, null, 
+									new Response.Listener<JSONObject>() {
 
 								@Override
 								public void onResponse(JSONObject response) {
 									// TODO Auto-generated method stub
-									//Log.i("HairyHearts", " Response " + response.toString());
+									Log.i("HairyHearts", " Response " + response.toString());
 									//song_info.setText("Response => "+response.toString());
 									String snippet;
 									try {
@@ -469,6 +485,7 @@ public class ComposeFragment extends Fragment {
 								public void onErrorResponse(VolleyError error) {
 									// TODO Auto-generated method stub
 									progressBar.setVisibility(View.GONE);
+									Log.i("HHearts", " onErrorResponse");
 
 								}
 							});
@@ -489,7 +506,7 @@ public class ComposeFragment extends Fragment {
 
 					@Override
 					public void onErrorResponse(VolleyError error) {
-						// TODO Auto-generated method stub
+						Log.i("HHearts", " onErrorResponse: " + error.getMessage());
 
 					}
 				});
@@ -504,6 +521,47 @@ public class ComposeFragment extends Fragment {
 			GNOperations.recognizeMIDStreamFromMic(this,config);
 
 		}
+	}
+
+	public class SendMessage extends AsyncTask<Void, Void, String> {
+		private String from;
+		private String to;
+		private String msg;
+
+		SendMessage(String from, String to, String msg) {
+			this.from = from;
+			this.to = to;
+			this.msg = msg;
+		}
+
+		@Override
+		protected String doInBackground(Void... params) {                     
+			BaasDocument doc = new BaasDocument("message");
+			doc.putString("from", from);
+			doc.putString("to", to);
+			doc.putString("msg", msg);
+			doc.saveSync(SaveMode.IGNORE_VERSION);
+
+			return doc.getId();
+		}
+
+		@Override
+		protected void onPostExecute(String id) {
+			BaasUser.withUserName(to).send(new JsonObject().putString("message", id), new BaasHandler<Void>() {
+				@Override
+				public void handle(BaasResult<Void> voidBaasResult) {
+					Toast.makeText(getActivity(), "Sent message", Toast.LENGTH_LONG).show();
+				}
+			});
+		}
+	}
+
+	private void sendMessage() {
+		String from = BaasUser.current().getName();
+		String to = receiverTextView.getText().toString();
+		String msg = criptedKey.getText().toString();
+
+		new SendMessage(from, to, msg).execute();
 	}
 
 }
