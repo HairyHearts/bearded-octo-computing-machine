@@ -16,7 +16,7 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.navigationdrawerexample"
+    package="org.hairyhearts"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -24,12 +24,26 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <permission
+        android:name="org.hairyhearts.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="org.hairyhearts.permission.C2D_MESSAGE" />
+
     <application
-        android:icon="@drawable/ic_launcher"
+        android:name="org.hairyhearts.HairyHearts"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_menu_logo"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light" >
         <activity
-            android:name="com.example.android.navigationdrawerexample.MainActivity"
+            android:name="org.hairyhearts.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,10 +51,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.example.android.navigationdrawerexample.ContactsActivity"
-            android:label="@string/title_activity_contacts" >
+        <activity android:name="org.hairyhearts.SuccessActivity" >
         </activity>
+
+        <receiver
+            android:name="org.hairyhearts.GCMReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="org.hairyhearts" /> 
+            </intent-filter>
+        </receiver>
+
+        <service android:name="org.hairyhearts.GCMService" />
     </application>
 
 </manifest>
