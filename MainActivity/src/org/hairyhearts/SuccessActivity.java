@@ -40,20 +40,21 @@ import com.gracenote.mmid.MobileSDK.GNSearchResult;
 import com.gracenote.mmid.MobileSDK.GNSearchResultReady;
 
 public class SuccessActivity extends Activity {
-    private static final String TAG = "SuccessActivity";
+	private static final String TAG = "SuccessActivity";
 
 
 	private GNConfig config;
 	private TextView message;
 	private ImageButton fp_button;
+	String messageString = "";
 
 	RequestQueue queue;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_success);
+		setContentView(R.layout.activity_success);
 
 
 		config = GNConfig.init("7486464-12AF0CC1BCE8C9726F6ADC0F77D3AF6D",this.getApplicationContext());
@@ -68,36 +69,37 @@ public class SuccessActivity extends Activity {
 		});
 
 		queue = Volley.newRequestQueue(this);
-		
-        Intent intent = getIntent();
-        Bundle bundle = getIntent().getExtras();
 
-        String id = bundle.getString("msgID");
+		Intent intent = getIntent();
+		Bundle bundle = getIntent().getExtras();
 
-        RequestToken res = BaasDocument.fetch("message", id, new BaasHandler<BaasDocument>() {
+		String id = bundle.getString("msgID");
 
-            @Override
-            public void handle(BaasResult<BaasDocument> res) {
-                try {
-                    BaasDocument doc = res.get();
+		RequestToken res = BaasDocument.fetch("message", id, new BaasHandler<BaasDocument>() {
 
-                    String buffer;
+			@Override
+			public void handle(BaasResult<BaasDocument> res) {
+				try {
+					BaasDocument doc = res.get();
 
-                    buffer = "from: " + doc.getString("from");
-                    buffer += "\nto: " + doc.getString("to");
-                    buffer += "\nmsg: " + doc.getString("msg");
+					String buffer;
 
-                    TextView tv = (TextView) findViewById(R.id.messageTextView);
-                    tv.setText(buffer);
-                } catch (BaasException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    
-    
-    
+					TextView tsender = (TextView) findViewById(R.id.receiver);
+					tsender.setText(doc.getString("from"));
+
+					
+					messageString = doc.getString("msg");
+					TextView tv = (TextView) findViewById(R.id.messageTextView);
+					tv.setText(messageString);
+				} catch (BaasException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
+
 
 	class RecognizeFromMic implements GNSearchResultReady {
 
@@ -172,11 +174,10 @@ public class SuccessActivity extends Activity {
 									}
 									//key_textview.setText("Key => "+ snippet);
 
-									String msgToDecode = message.getText().toString();
 									String msg = "";
 									try {
 										Coding encoder = new Coding(snippet);
-										msg = encoder.decrypt(msgToDecode);
+										msg = encoder.decrypt(messageString);
 										message.setText(msg);
 
 									} catch (Exception e) {
