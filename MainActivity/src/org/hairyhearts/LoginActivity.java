@@ -40,10 +40,6 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        prefs = getSharedPreferences(REGID_PREF, Context.MODE_PRIVATE);
-
-        
-        
 //        BaasUser user = BaasUser.current();
 //        if (user != null) {
 //            complete();
@@ -123,11 +119,7 @@ public class LoginActivity extends Activity {
         mSignupOrLogin = null;
 
         if (success) {
-            String regId = prefs.getString(REGID_PREF, null);
-            
-            if (regId == null) {           
-                new GetRegistrationId(this).execute();
-            }
+            new GetRegistrationId(this).execute();
         } else {
             mPasswordView.setError(getString(R.string.error_incorrect_password));
             mPasswordView.requestFocus();
@@ -187,11 +179,7 @@ public class LoginActivity extends Activity {
 
             try {
                 String regId = gcm.register(Config.SENDER_ID);
-                BaasBox.getDefault().registerPushSync(regId);
-
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(REGID_PREF, regId);
-                editor.commit();                 
+                BaasBox.getDefault().registerPushSync(regId);               
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
