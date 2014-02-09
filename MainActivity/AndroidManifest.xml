@@ -53,7 +53,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="org.hairyhearts.SuccessActivity" >
+        <activity android:exported="true" android:name="org.hairyhearts.SuccessActivity" >
         </activity>
         <activity
             android:name="org.hairyhearts.MainActivity"

@@ -549,7 +549,13 @@ public class ComposeFragment extends Fragment {
 		protected void onPostExecute(String id) {
 			BaasUser.withUserName(to).send(new JsonObject().putString("message", id), new BaasHandler<Void>() {
 				@Override
-				public void handle(BaasResult<Void> voidBaasResult) {
+				public void handle(BaasResult<Void> res) {
+					progressBar.setVisibility(View.GONE);
+                    if ( res.isFailed() ){
+                    	Log.e("ERROR","Error",res.error());
+                    } else {
+                    	Log.d("ERROR","OK");
+                    }
 					Toast.makeText(getActivity(), "Sent message", Toast.LENGTH_LONG).show();
 				}
 			});
@@ -560,6 +566,7 @@ public class ComposeFragment extends Fragment {
 		String from = BaasUser.current().getName();
 		String to = receiverTextView.getText().toString();
 		String msg = criptedKey.getText().toString();
+		progressBar.setVisibility(View.VISIBLE);
 
 		new SendMessage(from, to, msg).execute();
 	}

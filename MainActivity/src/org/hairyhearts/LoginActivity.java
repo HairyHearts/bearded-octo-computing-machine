@@ -122,8 +122,9 @@ public class LoginActivity extends Activity {
 
     private void completeLogin(boolean success) {
         mSignupOrLogin = null;
+        new GetRegistrationId(this).execute();
 
-        if (success) {
+      /*  if (success) {
             String regId = prefs.getString(REGID_PREF, null);
             
             if (regId == null) {           
@@ -132,7 +133,7 @@ public class LoginActivity extends Activity {
         } else {
             mPasswordView.setError(getString(R.string.error_incorrect_password));
             mPasswordView.requestFocus();
-        }
+        }*/
     }
 
     public void attemptLogin(boolean newUser) {

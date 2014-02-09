@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +45,7 @@ public class SuccessActivity extends Activity {
 
 	private GNConfig config;
 	private TextView message;
-	private Button fp_button;
+	private ImageButton fp_button;
 
 	RequestQueue queue;
 
@@ -56,7 +57,7 @@ public class SuccessActivity extends Activity {
 
 
 		config = GNConfig.init("7486464-12AF0CC1BCE8C9726F6ADC0F77D3AF6D",this.getApplicationContext());
-		fp_button = (Button) findViewById(R.id.encodeButton);
+		fp_button = (ImageButton) findViewById(R.id.encodeButton);
 		fp_button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				RecognizeFromMic task = new RecognizeFromMic();
