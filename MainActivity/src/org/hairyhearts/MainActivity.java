@@ -32,6 +32,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * This example illustrates a common usage of the DrawerLayout widget in the
@@ -177,7 +178,7 @@ public class MainActivity extends Activity {
 			new ComposeFragment().actionSendAudio(MainActivity.this);
 			return true;
 		case R.id.action_sendVideo:
-			new ComposeFragment().actionSendVideo(MainActivity.this);
+			Toast.makeText(MainActivity.this, "Soon as possible", Toast.LENGTH_SHORT).show();
 			return true;
 
 		case R.id.action_addContact:

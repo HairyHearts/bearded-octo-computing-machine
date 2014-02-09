@@ -85,7 +85,7 @@
             android:gravity="top"
             android:hint="Insert your message here.."
             android:inputType="textMultiLine"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <!-- <LinearLayout -->
         <!-- android:id="@+id/messageAudioView" -->
@@ -119,7 +119,8 @@
             android:id="@+id/messageAudioView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal" >
+            android:layout_gravity="center_horizontal" 
+            android:visibility="gone">
 
             <ProgressBar
                 android:id="@+id/progressBarMicButton"
@@ -202,7 +203,7 @@
                 android:layout_centerInParent="true"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_action_not_secure"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/encodeTextView"
@@ -211,7 +212,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:text="Encode"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </RelativeLayout>
     </LinearLayout>
 

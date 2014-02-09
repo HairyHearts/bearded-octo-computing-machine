@@ -6,13 +6,13 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item
-        android:id="@+id/action_sendAudio"
-        android:icon="@drawable/ic_action_mic"
+        android:id="@+id/action_sendText"
+        android:icon="@drawable/ic_menu_message_text"
         android:showAsAction="always"
         android:title="..."/>
     <item
-        android:id="@+id/action_sendText"
-        android:icon="@drawable/ic_menu_message_text"
+        android:id="@+id/action_sendAudio"
+        android:icon="@drawable/ic_action_mic"
         android:showAsAction="always"
         android:title="..."/>
     <item
