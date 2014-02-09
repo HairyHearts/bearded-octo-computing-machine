@@ -45,14 +45,16 @@ public class GCMService extends IntentService {
 
                     String from = doc.getString("from");
                     
+                    Intent i = new Intent(this, SuccessActivity.class); //TODO aggiornare activity per decryptare
+                    i.putExtra("msgID", id);
+                    
                     PendingIntent pendingIntent =
                             PendingIntent.getActivity(
                             this,
                             0,
-                            new Intent(this, SuccessActivity.class), //TODO aggiornare activity per decryptare
+                            i,
                             PendingIntent.FLAG_UPDATE_CURRENT
-                        );
-                    
+                        );                                                          
                     
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                         .setSmallIcon(android.R.drawable.stat_notify_chat) //TODO aggiornare icona

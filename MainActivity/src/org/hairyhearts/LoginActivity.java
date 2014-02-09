@@ -19,7 +19,7 @@ import com.baasbox.android.RequestToken;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class LoginActivity extends Activity {
-    private final static String TAG = "MainActivity";
+    private final static String TAG = "LoginActivity";
     private final static String SIGNUP_TOKEN_KEY = "signup_token_key";
 
     private String mUsername;
@@ -35,6 +35,11 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        BaasUser user = BaasUser.current();
+        if (user != null) {
+            complete();
+        }
+        
         if (savedInstanceState != null) {
             mSignupOrLogin = savedInstanceState.getParcelable(SIGNUP_TOKEN_KEY);
         }
