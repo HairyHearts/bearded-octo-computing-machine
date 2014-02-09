@@ -150,7 +150,7 @@ public class LoginActivity extends Activity {
     }
     
     public void complete() {
-        startActivity(new Intent(this, SuccessActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
     
