@@ -64,5 +64,17 @@ public class Coding {
 	    return decryptedText;
 	}
 	
+	public byte[] encryptObj(byte[] objToEncrypt) throws Exception {
+		cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+        byte[] encrypted = cipher.doFinal(objToEncrypt);
+        return encrypted;
+    }
+
+    public byte[] decryptObj(byte[] objToDecrypt) throws Exception {
+    	cipher.init(Cipher.DECRYPT_MODE, key, spec);
+	    byte[] bytes = Base64.decode(objToDecrypt, Base64.DEFAULT);
+	    byte[] decrypted = cipher.doFinal(bytes);
+	    return decrypted;
+    }
 }
 
