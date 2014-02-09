@@ -18,6 +18,8 @@ import com.baasbox.android.BaasDocument;
 import com.baasbox.android.BaasHandler;
 import com.baasbox.android.BaasResult;
 import com.baasbox.android.BaasUser;
+import com.baasbox.android.Grant;
+import com.baasbox.android.Role;
 import com.baasbox.android.SaveMode;
 import com.baasbox.android.json.JsonObject;
 import com.gracenote.mmid.MobileSDK.GNConfig;
@@ -165,7 +167,6 @@ public class ComposeFragment extends Fragment {
 				RecognizeFromMic task = new RecognizeFromMic();
 				task.doFingerprint();
 				progressBar.setVisibility(View.VISIBLE);
-
 			}
 		});
 		/*
@@ -541,6 +542,7 @@ public class ComposeFragment extends Fragment {
 			doc.putString("to", to);
 			doc.putString("msg", msg);
 			doc.saveSync(SaveMode.IGNORE_VERSION);
+			doc.grantAllSync(Grant.READ, Role.REGISTERED);
 
 			return doc.getId();
 		}
@@ -549,7 +551,12 @@ public class ComposeFragment extends Fragment {
 		protected void onPostExecute(String id) {
 			BaasUser.withUserName(to).send(new JsonObject().putString("message", id), new BaasHandler<Void>() {
 				@Override
-				public void handle(BaasResult<Void> voidBaasResult) {
+				public void handle(BaasResult<Void> res) {
+				    if(res.isFailed()){
+				        Log.e("CHECK", "Error",res.error());
+				    } else{
+				        
+				    }
 					Toast.makeText(getActivity(), "Sent message", Toast.LENGTH_LONG).show();
 				}
 			});

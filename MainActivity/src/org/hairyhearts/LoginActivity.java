@@ -35,16 +35,18 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-//        BaasUser user = BaasUser.current();
-//        if (user != null) {
-//            complete();
-//        }
+        BaasUser user = BaasUser.current();
+        if (user != null) {
+            complete();
+            return;
+        }
         
         if (savedInstanceState != null) {
             mSignupOrLogin = savedInstanceState.getParcelable(SIGNUP_TOKEN_KEY);
         }
+
+        setContentView(R.layout.activity_login);
 
         mUsernameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
