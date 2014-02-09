@@ -71,7 +71,7 @@ public class ComposeFragment extends Fragment {
 	private static TextView criptedKey;
 	private static TextView keySongTextView;
 
-
+	private ProgressBar progressBar;
 
 	private GNConfig config;
 	RequestQueue queue;
@@ -110,7 +110,7 @@ public class ComposeFragment extends Fragment {
 		setHasOptionsMenu(true);
 		encodeTextView = (TextView) rootView.findViewById(R.id.encodeTextView);
 		encodeButton = (ImageButton) rootView.findViewById(R.id.encodeButton);
-		final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progressBarEncodeButton);
+		progressBar = (ProgressBar) rootView.findViewById(R.id.progressBarEncodeButton);
 
 		micButton = (ImageButton) rootView.findViewById(R.id.recButton);
 		progressBarMicrofono = (ProgressBar) rootView.findViewById(R.id.progressBarMicButton);
@@ -366,6 +366,8 @@ public class ComposeFragment extends Fragment {
 
 			if (result.isFingerprintSearchNoMatchStatus()) {
 				//song_info.setText("no match");
+				progressBar.setVisibility(View.GONE);
+
 			} else {
 				GNSearchResponse response = result.getBestResponse();
 				//song_info.setText(response.getTrackTitle() + " by " + response.getArtist());
@@ -428,6 +430,8 @@ public class ComposeFragment extends Fragment {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 										snippet = "Nulla";
+										progressBar.setVisibility(View.GONE);
+
 									}
 
 
@@ -442,6 +446,7 @@ public class ComposeFragment extends Fragment {
 										encodeButton.setVisibility(View.GONE);
 										encodeTextView.setVisibility(View.GONE);
 										sendbutton.setVisibility(View.VISIBLE);
+										progressBar.setVisibility(View.GONE);
 
 
 										bodyMessage.setVisibility(View.GONE);
@@ -452,6 +457,7 @@ public class ComposeFragment extends Fragment {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 										criptedKey.setText("Error");
+										progressBar.setVisibility(View.GONE);
 
 
 									}
@@ -462,6 +468,7 @@ public class ComposeFragment extends Fragment {
 								@Override
 								public void onErrorResponse(VolleyError error) {
 									// TODO Auto-generated method stub
+									progressBar.setVisibility(View.GONE);
 
 								}
 							});

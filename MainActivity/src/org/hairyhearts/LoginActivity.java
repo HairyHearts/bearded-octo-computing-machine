@@ -36,10 +36,10 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         BaasUser user = BaasUser.current();
-        if (user != null) {
+     /*   if (user != null) {
             complete();
         }
-        
+       */ 
         if (savedInstanceState != null) {
             mSignupOrLogin = savedInstanceState.getParcelable(SIGNUP_TOKEN_KEY);
         }
