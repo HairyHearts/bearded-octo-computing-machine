@@ -24,9 +24,6 @@ public class LoginActivity extends Activity {
     private final static String TAG = "LoginActivity";
     private final static String SIGNUP_TOKEN_KEY = "signup_token_key";
 
-    public static String REGID_PREF = "regid";
-    public static SharedPreferences  prefs;
-    
     private String mUsername;
     private EditText mUsernameView;
 

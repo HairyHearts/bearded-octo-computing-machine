@@ -1,20 +1,218 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity" >
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="OK!"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <AutoCompleteTextView
+        android:id="@+id/receiver"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:hint="Sender" >
 
-</RelativeLayout>
+        <requestFocus />
+    </AutoCompleteTextView>
+
+    <LinearLayout
+        android:id="@+id/sendBodyMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="250dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Key Song : " />
+
+            <TextView
+                android:id="@+id/keySongTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not found" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cripted message : " />
+
+            <TextView
+                android:id="@+id/criptedMessageTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not cripted" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/SendMessageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_action_send_now" 
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bodyMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:visibility="visible" >
+
+        <EditText
+            android:id="@+id/messageTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:ems="10"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:visibility="visible" />
+
+        <!-- <LinearLayout -->
+        <!-- android:id="@+id/messageAudioView" -->
+        <!-- android:layout_width="fill_parent" -->
+        <!-- android:layout_height="fill_parent" -->
+        <!-- android:orientation="vertical" > -->
+
+
+        <!-- <ProgressBar -->
+        <!-- android:id="@+id/progressBarEncodeButton" -->
+        <!-- style="?android:attr/progressBarStyleLarge" -->
+        <!-- android:layout_width="wrap_content" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_centerInParent="true" -->
+        <!-- android:visibility="invisible" /> -->
+
+
+        <!-- <ImageButton -->
+        <!-- android:id="@+id/recButton" -->
+        <!-- android:layout_width="wrap_content" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_marginTop="50dp" -->
+        <!-- android:background="@android:color/transparent" -->
+        <!-- android:layout_gravity="center_horizontal" -->
+        <!-- android:src="@drawable/ic_action_mic"/> -->
+
+
+        <!-- </LinearLayout> -->
+
+        <RelativeLayout
+            android:id="@+id/messageAudioView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal" 
+            android:visibility="gone">
+
+            <ProgressBar
+                android:id="@+id/progressBarMicButton"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/recButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_action_mic" />
+
+            <LinearLayout
+                android:id="@+id/micPlaycontainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/recButton"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="visible" >
+
+                <ImageButton
+                    android:id="@+id/playButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_action_play"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/StopButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_action_stop"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_button"
+        android:layout_width="fill_parent"
+        android:layout_height="70dp"
+        android:orientation="vertical" >
+
+        <!-- <TextView -->
+        <!-- android:layout_width="wrap_content" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_gravity="center_horizontal" -->
+        <!-- android:text="Encode" /> -->
+
+        <RelativeLayout
+            android:id="@+id/RelativeLayoutLeftButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp" >
+
+            <ProgressBar
+                android:id="@+id/progressBarEncodeButton"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="invisible" />
+
+            <ImageButton
+                android:id="@+id/encodeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_action_not_secure"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/encodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="Decode"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

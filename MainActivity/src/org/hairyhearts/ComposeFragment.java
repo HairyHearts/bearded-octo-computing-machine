@@ -78,7 +78,7 @@ public class ComposeFragment extends Fragment {
 	private static TextView criptedKey;
 	private static TextView keySongTextView;
 
-
+	private ProgressBar progressBar;
 
 	private GNConfig config;
 	RequestQueue queue;
@@ -117,7 +117,7 @@ public class ComposeFragment extends Fragment {
 		setHasOptionsMenu(true);
 		encodeTextView = (TextView) rootView.findViewById(R.id.encodeTextView);
 		encodeButton = (ImageButton) rootView.findViewById(R.id.encodeButton);
-		final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progressBarEncodeButton);
+		progressBar = (ProgressBar) rootView.findViewById(R.id.progressBarEncodeButton);
 
 		micButton = (ImageButton) rootView.findViewById(R.id.recButton);
 		progressBarMicrofono = (ProgressBar) rootView.findViewById(R.id.progressBarMicButton);
@@ -150,15 +150,15 @@ public class ComposeFragment extends Fragment {
 			}
 		});
 
-	      sendbutton.setOnClickListener(new View.OnClickListener() {
-	            public void onClick(View v) {
-	                sendMessage();
+		sendbutton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				sendMessage();
 
-	            }
-	        });
-		
-		
-		
+			}
+		});
+
+
+
 
 		encodeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -381,6 +381,8 @@ public class ComposeFragment extends Fragment {
 
 			if (result.isFingerprintSearchNoMatchStatus()) {
 				//song_info.setText("no match");
+				progressBar.setVisibility(View.GONE);
+
 			} else {
 				GNSearchResponse response = result.getBestResponse();
 				Log.d("RecognizeFromMic", "artist: " + response.getArtist());
@@ -428,7 +430,7 @@ public class ComposeFragment extends Fragment {
 
 
 							JsonObjectRequest jsObjRequestSnippet = new JsonObjectRequest(Request.Method.GET, url_snippet + trackid, null, 
-							        new Response.Listener<JSONObject>() {
+									new Response.Listener<JSONObject>() {
 
 								@Override
 								public void onResponse(JSONObject response) {
@@ -444,6 +446,8 @@ public class ComposeFragment extends Fragment {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 										snippet = "Nulla";
+										progressBar.setVisibility(View.GONE);
+
 									}
 
 
@@ -458,6 +462,7 @@ public class ComposeFragment extends Fragment {
 										encodeButton.setVisibility(View.GONE);
 										encodeTextView.setVisibility(View.GONE);
 										sendbutton.setVisibility(View.VISIBLE);
+										progressBar.setVisibility(View.GONE);
 
 
 										bodyMessage.setVisibility(View.GONE);
@@ -468,6 +473,7 @@ public class ComposeFragment extends Fragment {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 										criptedKey.setText("Error");
+										progressBar.setVisibility(View.GONE);
 
 
 									}
@@ -478,7 +484,8 @@ public class ComposeFragment extends Fragment {
 								@Override
 								public void onErrorResponse(VolleyError error) {
 									// TODO Auto-generated method stub
-                                    Log.i("HHearts", " onErrorResponse");
+									progressBar.setVisibility(View.GONE);
+									Log.i("HHearts", " onErrorResponse");
 
 								}
 							});
@@ -499,7 +506,7 @@ public class ComposeFragment extends Fragment {
 
 					@Override
 					public void onErrorResponse(VolleyError error) {
-                        Log.i("HHearts", " onErrorResponse: " + error.getMessage());
+						Log.i("HHearts", " onErrorResponse: " + error.getMessage());
 
 					}
 				});
@@ -516,45 +523,45 @@ public class ComposeFragment extends Fragment {
 		}
 	}
 
-    public class SendMessage extends AsyncTask<Void, Void, String> {
-        private String from;
-        private String to;
-        private String msg;
+	public class SendMessage extends AsyncTask<Void, Void, String> {
+		private String from;
+		private String to;
+		private String msg;
 
-        SendMessage(String from, String to, String msg) {
-            this.from = from;
-            this.to = to;
-            this.msg = msg;
-        }
+		SendMessage(String from, String to, String msg) {
+			this.from = from;
+			this.to = to;
+			this.msg = msg;
+		}
 
-        @Override
-        protected String doInBackground(Void... params) {                     
-            BaasDocument doc = new BaasDocument("message");
-            doc.putString("from", from);
-            doc.putString("to", to);
-            doc.putString("msg", msg);
-            doc.saveSync(SaveMode.IGNORE_VERSION);
+		@Override
+		protected String doInBackground(Void... params) {                     
+			BaasDocument doc = new BaasDocument("message");
+			doc.putString("from", from);
+			doc.putString("to", to);
+			doc.putString("msg", msg);
+			doc.saveSync(SaveMode.IGNORE_VERSION);
 
-            return doc.getId();
-        }
+			return doc.getId();
+		}
 
-        @Override
-        protected void onPostExecute(String id) {
-            BaasUser.withUserName(to).send(new JsonObject().putString("message", id), new BaasHandler<Void>() {
-                @Override
-                public void handle(BaasResult<Void> voidBaasResult) {
-                    Toast.makeText(getActivity(), "Sent message", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-    }
-	
-    private void sendMessage() {
-        String from = BaasUser.current().getName();
-        String to = receiverTextView.getText().toString();
-        String msg = criptedKey.getText().toString();
+		@Override
+		protected void onPostExecute(String id) {
+			BaasUser.withUserName(to).send(new JsonObject().putString("message", id), new BaasHandler<Void>() {
+				@Override
+				public void handle(BaasResult<Void> voidBaasResult) {
+					Toast.makeText(getActivity(), "Sent message", Toast.LENGTH_LONG).show();
+				}
+			});
+		}
+	}
 
-        new SendMessage(from, to, msg).execute();
-    }
-	
+	private void sendMessage() {
+		String from = BaasUser.current().getName();
+		String to = receiverTextView.getText().toString();
+		String msg = criptedKey.getText().toString();
+
+		new SendMessage(from, to, msg).execute();
+	}
+
 }
