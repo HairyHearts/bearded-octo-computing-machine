@@ -1,7 +1,24 @@
 package org.hairyhearts;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.gracenote.mmid.MobileSDK.GNConfig;
+import com.gracenote.mmid.MobileSDK.GNOperations;
+import com.gracenote.mmid.MobileSDK.GNSearchResponse;
+import com.gracenote.mmid.MobileSDK.GNSearchResult;
+import com.gracenote.mmid.MobileSDK.GNSearchResultReady;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -22,6 +39,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -52,9 +71,19 @@ public class ComposeFragment extends Fragment {
 	private static TextView criptedKey;
 	private static TextView keySongTextView;
 
+
+
+	private GNConfig config;
+	RequestQueue queue;
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		config = GNConfig.init("7486464-12AF0CC1BCE8C9726F6ADC0F77D3AF6D",getActivity().getApplicationContext());
+		queue = Volley.newRequestQueue(getActivity());
+
 
 		rootView = inflater.inflate(R.layout.compose_fragment, container, false);
 		receiverTextView = (AutoCompleteTextView) rootView.findViewById(R.id.receiver);
@@ -67,8 +96,8 @@ public class ComposeFragment extends Fragment {
 		}
 
 		messageTextView = (TextView) rootView.findViewById(R.id.messageTextView);
-		 bodyMessage = (LinearLayout) rootView.findViewById(R.id.bodyMessage);
-		 sendBodyMessage = (LinearLayout) rootView.findViewById(R.id.sendBodyMessage);
+		bodyMessage = (LinearLayout) rootView.findViewById(R.id.bodyMessage);
+		sendBodyMessage = (LinearLayout) rootView.findViewById(R.id.sendBodyMessage);
 		sendbutton = (ImageButton) rootView.findViewById(R.id.SendMessageButton);
 		sharedPreferences = getActivity().getSharedPreferences(ContactsFragment.class.getSimpleName(), Context.MODE_PRIVATE);
 		userList = getUserList();
@@ -113,6 +142,18 @@ public class ComposeFragment extends Fragment {
 				encodeTextView.setVisibility(flag);
 			}
 		});
+
+
+
+		encodeButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				RecognizeFromMic task = new RecognizeFromMic();
+				task.doFingerprint();
+				progressBar.setVisibility(View.VISIBLE);
+
+			}
+		});
+		/*
 		encodeButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -124,9 +165,9 @@ public class ComposeFragment extends Fragment {
 					public void run() {
 						Log.d("tag", "This'll run 6 seconds later");
 						progressBar.setVisibility(View.INVISIBLE);
-						
-						
-						
+
+
+
 						if(true){
 							String keyPassword = "lo strano percorso che ognuno di noi..bbla blabvla";
 							String messaggioCriptata = "w3323nkwebd98ay3eookqhd9y871hbkjabdouasgdoijwdy3jjnqwdbjhvasd";
@@ -150,9 +191,9 @@ public class ComposeFragment extends Fragment {
 				}, 6000);
 
 			}
-		});
-		
-		
+		}); */
+
+
 
 		playButton.setOnClickListener(new OnClickListener() {
 
@@ -316,6 +357,146 @@ public class ComposeFragment extends Fragment {
 
 		// disable
 		((Activity) context).findViewById(R.id.messageTextView).setVisibility(View.GONE);
+	}
+
+
+	class RecognizeFromMic implements GNSearchResultReady {
+
+		public void GNResultReady(GNSearchResult result) {
+
+			if (result.isFingerprintSearchNoMatchStatus()) {
+				//song_info.setText("no match");
+			} else {
+				GNSearchResponse response = result.getBestResponse();
+				//song_info.setText(response.getTrackTitle() + " by " + response.getArtist());
+
+				String trackTitle, trackArtist;
+				try {
+					trackTitle = URLEncoder.encode(response.getTrackTitle() , "utf-8");
+					trackArtist = URLEncoder.encode(response.getArtist(), "utf-8");
+
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					trackTitle = "empty";
+					trackArtist = "empty";
+				}
+
+
+				String url = "http://api.musixmatch.com/ws/1.1/track.search?" +
+						"apikey=40b6339efb4fd3c2d3dfd5eb73854362" +
+						"&q_track= "  +
+						trackTitle   +
+						"&q_artist=" + 
+						trackArtist ;
+
+
+
+				final String url_snippet = "http://api.musixmatch.com/ws/1.1/track.snippet.get?" +
+						"apikey=40b6339efb4fd3c2d3dfd5eb73854362" +
+						"&track_id= ";
+
+				String snippet = "nulla";
+
+				JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						// TODO Auto-generated method stub
+						//Log.i("HairyHearts", " Response " + response.toString());
+						//song_info.setText("Response => "+response.toString());
+						try {
+							String trackid = response.getJSONObject("message").getJSONObject("body")
+									.getJSONArray("track_list").getJSONObject(0).getJSONObject("track")
+									.getString("track_id");
+							//	song_info.setText("Track ID => "+ trackid);
+
+
+							JsonObjectRequest jsObjRequestSnippet = new JsonObjectRequest(Request.Method.GET, url_snippet + trackid, null, new Response.Listener<JSONObject>() {
+
+								@Override
+								public void onResponse(JSONObject response) {
+									// TODO Auto-generated method stub
+									//Log.i("HairyHearts", " Response " + response.toString());
+									//song_info.setText("Response => "+response.toString());
+									String snippet;
+									try {
+										snippet = response.getJSONObject("message").getJSONObject("body")
+												.getJSONObject("snippet")
+												.getString("snippet_body");
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+										snippet = "Nulla";
+									}
+
+
+
+									String msgToDecode = messageTextView.getText().toString();
+									String msgEnc = "";
+									try {
+										Coding encoder = new Coding(snippet);
+										msgEnc = encoder.encrypt(msgToDecode);
+										ComposeFragment.setSendBodyMessage(snippet,msgEnc);
+
+										encodeButton.setVisibility(View.GONE);
+										encodeTextView.setVisibility(View.GONE);
+										sendbutton.setVisibility(View.VISIBLE);
+
+
+										bodyMessage.setVisibility(View.GONE);
+										sendBodyMessage.setVisibility(View.VISIBLE);
+										Log.i("HHearts", " Decoded " + encoder.decrypt(msgEnc));
+
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+										criptedKey.setText("Error");
+
+
+									}
+
+								}
+							}, new Response.ErrorListener() {
+
+								@Override
+								public void onErrorResponse(VolleyError error) {
+									// TODO Auto-generated method stub
+
+								}
+							});
+
+							queue.add(jsObjRequestSnippet);
+
+
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							Log.i("HairyHearts", " Track Id " + "nulla");
+
+						}
+
+						//progressBar.setVisibility(View.GONE);
+					}
+				}, new Response.ErrorListener() {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+
+
+
+				queue.add(jsObjRequest);
+
+			}
+		}
+		public void doFingerprint() {
+			GNOperations.recognizeMIDStreamFromMic(this,config);
+
+		}
 	}
 
 }
